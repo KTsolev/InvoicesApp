@@ -1,45 +1,60 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { InvoiceProvider } from './contexts/invoiceContext';
+import CreateInvoice from './screens/CreateInvoice';
+import CameraView from './screens/CameraView';
+import LoadInvoice from './screens/LoadInvoice';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faFileCirclePlus, faFileImport } from '@fortawesome/free-solid-svg-icons';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+const Tab = createBottomTabNavigator();
+const HomeStack = createStackNavigator();
 
+const HomeStackScreen = () => {
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <HomeStack.Navigator initialRouteName="Create Invoice" screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="Create Invoice" component={CreateInvoice} />
+      <HomeStack.Screen name="Camera" component={CameraView} options={{ headerShown: true }} />
+    </HomeStack.Navigator>
   );
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
+const App = () => {
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <NavigationContainer>
+      <InvoiceProvider>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+          <Tab.Screen
+            name="Create Invoice"
+            component={HomeStackScreen}
+            options={{
+              title: 'Нова Фактура',
+              tabBarIcon: ({ size, focused, color }) => {
+                return (
+                  <FontAwesomeIcon icon={faFileCirclePlus} color={color} size={size} />
+                );
+              },
+            }}
+          />
+          <Tab.Screen
+            name="Load Invoice"
+            component={LoadInvoice}
+            options={{
+              title: 'Запазени Фактури',
+              tabBarIcon: ({ size, focused, color }) => {
+                return (
+                  <FontAwesomeIcon icon={faFileImport} color={color} size={size} />
+                );
+              },
+            }}
+          />
+        </Tab.Navigator>
+      </InvoiceProvider>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
